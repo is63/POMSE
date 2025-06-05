@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="">
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" href="/favicon2.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>POMSE</title>
+</head>
+<style>
+  body {
+    /*Color del cuerpo para que no dé flash blancos al editar o cargar */
+    background: #161515;
+  }
+
+  /* ESTILOS DEL SCROLLBAR*/
+  *::-webkit-scrollbar {
+    width: 3px;
+    background: #161515;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background: linear-gradient(120deg, #8f44ffc0 60%, #bfa600 100%);
+    border-radius: 6px;
+
+  }
+
+  *::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(120deg, #8f44ffc0 60%, #bfa600 100%);
+  }
+
+  *::-webkit-scrollbar-track {
+    background: #222;
+    border-radius: 6px;
+  }
+
+  /* Para Firefox */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #8f44ffc0 #161515;
+  }
+</style>
+
+<body>
+  <div id="app"></div>
+  <script type="module" src="/src/main.js"></script>
+</body>
+
+</html>

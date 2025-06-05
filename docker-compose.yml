@@ -1,0 +1,16 @@
+services:
+  frontend:
+    build: .
+    ports:
+      - "8081:5173" # localhost:8081 expone el puerto 5173 interno
+    volumes:
+      - .:/app # hot reload con bind mount
+    working_dir: /app
+    command: npm run dev -- --host
+    networks:
+      - pomse_back_laravel # misma red que tu API
+    restart: always
+
+networks:
+  pomse_back_laravel:
+    external: true # usa la red Docker externa donde ya está el contenedor `api`
