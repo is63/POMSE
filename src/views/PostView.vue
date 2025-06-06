@@ -174,6 +174,28 @@ onMounted(async () => {
     )
 
     await fetchLikeAndSavedStatus()
+
+    // --- Polling para nuevos comentarios cada 3 segundos ---
+    setInterval(async () => {
+        try {
+            const res = await axios.get(`/commentsOfPost/${route.params.id}?page=1&limit=${commentsPageSize}`);
+            const paginator = res.data.comments;
+            const newComments = Array.isArray(paginator.data) ? paginator.data : [];
+            // Si hay más comentarios que los actuales, actualiza la lista
+            if (newComments.length > comments.value.length) {
+                comments.value = newComments;
+                commentsAllLoaded.value = false;
+                // Cargar usuarios de los nuevos comentarios
+                for (const comment of newComments) {
+                    if (comment.usuario_id) {
+                        await fetchUser(comment.usuario_id);
+                    }
+                }
+            }
+        } catch (e) {
+            // Silenciar errores de polling
+        }
+    }, 3000);
 })
 
 async function fetchUser(userId) {

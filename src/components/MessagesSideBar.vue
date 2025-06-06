@@ -118,16 +118,15 @@ function scrollToBottom() {
     }, 100)
 }
 
-let fetchInterval = null;
-let lastMessagesLength = 0;
-
-watch(() => props.chatId, fetchMessages)
-onMounted(() => {
-    userId.value = getUserIdFromToken()
-    fetchMessages()
-
-    if (props.chatId) {
-        echo.join(`chat.${props.chatId}`)
+watch(() => props.chatId, (newChatId, oldChatId) => {
+    fetchMessages();
+    // Salir del canal anterior si existe
+    if (oldChatId) {
+        echo.leave(`chat.${oldChatId}`);
+    }
+    // Unirse al nuevo canal si existe
+    if (newChatId) {
+        echo.join(`chat.${newChatId}`)
             .here((users) => {
                 // Usuarios conectados al chat
             })
@@ -138,7 +137,7 @@ onMounted(() => {
                 // Usuario sale del chat
             })
             .listen('MessageSent', (e) => {
-                // Solo añadir si no existe ya (por id)
+                console.log('Nuevo mensaje recibido:', e.message);
                 if (!messages.value.some(m => m.id === e.message.id)) {
                     messages.value.push({
                         id: e.message.id,
@@ -152,41 +151,68 @@ onMounted(() => {
                 }
             });
     }
-    // Polling cada 3 segundos
-    fetchInterval = setInterval(async () => {
-        if (!props.chatId) return;
-        try {
-            const token = getToken();
-            const res = await axios.get(`chats/${props.chatId}`, {
-                headers: token ? { 'Authorization': `Bearer ${token}` } : {}
-            });
-            const msgs = Array.isArray(res.data.messages) ? res.data.messages.map(msg => ({
-                id: msg.id,
-                texto: msg.content,
-                emisor_id: msg.user_id,
-                created_at: msg.created_at,
-                imagen: msg.image_path ? ('http://localhost:8080/storage/' + msg.image_path) : null,
-                user: msg.user
-            })) : [];
-            if (msgs.length !== messages.value.length) {
-                messages.value = msgs;
-                scrollToBottom();
-            }
-        } catch (e) {
-            // Silenciar errores de polling
-        }
-    }, 3000);
 });
+
+onMounted(() => {
+    userId.value = getUserIdFromToken();
+    fetchMessages();
+    // Unirse al canal del chat actual si existe
+    if (props.chatId) {
+        echo.join(`chat.${props.chatId}`)
+            .here((users) => { })
+            .joining((user) => { })
+            .leaving((user) => { })
+            .listen('MessageSent', (e) => {
+                if (!messages.value.some(m => m.id === e.message.id)) {
+                    messages.value.push({
+                        id: e.message.id,
+                        texto: e.message.content,
+                        emisor_id: e.message.user_id,
+                        created_at: e.message.created_at,
+                        imagen: e.message.image_path ? ('http://localhost:8080/storage/' + e.message.image_path) : null,
+                        user: e.message.user
+                    });
+                    scrollToBottom();
+                }
+            });
+    }
+});
+
+// Polling cada 3 segundos (comentado, solo usar si se necesita fallback sin websockets)
+let fetchInterval = setInterval(async () => {
+    if (!props.chatId) return;
+    try {
+        const token = getToken();
+        const res = await axios.get(`chats/${props.chatId}`, {
+            headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+        });
+        const msgs = Array.isArray(res.data.messages) ? res.data.messages.map(msg => ({
+            id: msg.id,
+            texto: msg.content,
+            emisor_id: msg.user_id,
+            created_at: msg.created_at,
+            imagen: msg.image_path ? ('http://localhost:8080/storage/' + msg.image_path) : null,
+            user: msg.user
+        })) : [];
+        if (msgs.length !== messages.value.length) {
+            messages.value = msgs;
+            scrollToBottom();
+        }
+    } catch (e) {
+        // Silenciar errores de polling
+    }
+}, 3000);
 
 // No olvides salir del canal cuando cambias de chat o destruyes el componente
 onUnmounted(() => {
     if (props.chatId) {
         echo.leave(`chat.${props.chatId}`);
     }
-    if (fetchInterval) {
-        clearInterval(fetchInterval);
-        fetchInterval = null;
-    }
+    // Si necesitas volver a activar el polling, descomenta esto:
+    // if (fetchInterval) {
+    //     clearInterval(fetchInterval);
+    //     fetchInterval = null;
+    // }
 });
 </script>
 
@@ -231,9 +257,7 @@ onUnmounted(() => {
                                     <div v-if="msg.imagen" class="chat-message-image-wrapper">
                                         <img :src="msg.imagen" class="chat-message-image" alt="Imagen enviada" />
                                     </div>
-                                    <button v-if="String(msg.emisor_id) === String(userId)" class="edit-btn"
-                                        title="Editar mensaje" @click="startEditing(msg)"><i
-                                            class="bi bi-pencil-square"></i></button>
+                                    <!-- Botón de editar eliminado -->
                                 </template>
                             </div>
                         </div>
@@ -244,10 +268,14 @@ onUnmounted(() => {
                     <textarea v-model="newMessage" class="chat-input-textarea" placeholder="Escribe un mensaje..."
                         :disabled="sending" @keydown="handleKeydown" maxlength="500" rows="2"
                         :rows="Math.min(4, newMessage.split('\n').length)" style="resize: vertical;" />
-                    <input type="file" accept="image/*" @change="handleImageChange" :disabled="sending"
-                        style="margin-left:0.5em;max-width:120px;" />
-                    <button class="chat-send-btn" :disabled="sending || (!newMessage.trim() && !selectedImage)"
-                        @click="sendMessage">Enviar</button>
+                    <label for="file-upload" class="clip-btn" :class="{ 'clip-selected': selectedImage }"
+                        style="margin-left:0.1em;max-width:40px;cursor:pointer;display:flex;align-items:center;">
+                        <i class="bi bi-paperclip" style="font-size:1.6em;"
+                            :style="selectedImage ? 'color:#ffd91c;' : 'color:#8E44FF;'" />
+                        <input id="file-upload" type="file" accept="image/*" @change="handleImageChange"
+                            :disabled="sending" style="display:none;" />
+                    </label>
+                    <button class="chat-send-btn" :disabled="sending" @click="sendMessage">Enviar</button>
                 </div>
             </aside>
         </div>
@@ -412,8 +440,14 @@ onUnmounted(() => {
     padding: 0.7em 1.5em;
     font-size: 1em;
     font-weight: 600;
-    cursor: not-allowed;
-    opacity: 0.7;
+    cursor: pointer;
+    opacity: 1;
+    transition: background 0.18s, color 0.18s, opacity 0.18s;
+}
+
+.chat-send-btn:hover {
+    background: #fffbe6;
+    color: #8E44FF;
 }
 
 .edit-btn {
@@ -430,6 +464,26 @@ onUnmounted(() => {
 .edit-btn:hover {
     color: #fffbe6;
     opacity: 1;
+}
+
+.clip-btn {
+    margin-left: 0.1em !important;
+    margin-right: 0.7em !important;
+    max-width: 40px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    transition: color 0.18s;
+}
+
+.clip-btn i {
+    font-size: 1.6em;
+    color: #8E44FF;
+    transition: color 0.18s;
+}
+
+.clip-btn:hover i {
+    color: #fffbe6;
 }
 
 .own-message {
@@ -574,5 +628,16 @@ onUnmounted(() => {
 .slide-chat-sidebar-leave-from {
     transform: translateX(0);
     opacity: 1;
+}
+
+/* Agrega este estilo al final del bloque <style scoped> si quieres personalizar el hover del clip */
+.clip-btn:hover i {
+    color: #fffbe6;
+}
+
+.clip-btn.clip-selected i {
+    color: #ffd91c !important;
+    transform: scale(1.15) rotate(-20deg);
+    transition: color 0.18s, transform 0.18s;
 }
 </style>
