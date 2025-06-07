@@ -298,10 +298,74 @@ onMounted(() => {
     loadFriends()
     loadPendingRequests()
   })
+  pendingRequestsInterval = setInterval(pollPendingRequests, 3000)
 })
 onUnmounted(() => {
   window.removeEventListener('token-changed', loadFriends)
+  if (pendingRequestsInterval) clearInterval(pendingRequestsInterval)
 })
+
+// Variable para guardar el id del intervalo
+let pendingRequestsInterval = null
+
+function areRequestListsEqual(listA, listB) {
+  if (listA.length !== listB.length) return false
+  const idsA = listA.map(r => r.friendship_id).sort()
+  const idsB = listB.map(r => r.friendship_id).sort()
+  return idsA.every((id, idx) => id === idsB[idx])
+}
+
+async function pollPendingRequests() {
+  let token = sessionStorage.getItem('token')
+  if (!token) {
+    pendingRequests.value = []
+    return
+  }
+  try {
+    let response = await axios.get('friendshipsOfUser', {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
+    let data = response.data
+    let usuario_id = null
+    try {
+      usuario_id = JSON.parse(atob(token.split('.')[1])).sub
+    } catch { }
+    if (Array.isArray(data) && data.length > 0) {
+      let pending = data.filter(friend =>
+        String(friend.accepted) === '0' &&
+        String(friend.amigo_id) == String(usuario_id) &&
+        String(friend.solicitante_id) !== String(usuario_id)
+      ).slice(0, 50)
+      if (pending.length > 0) {
+        let usersResp = await axios.get('users', {
+          headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+        })
+        let allUsers = Array.isArray(usersResp.data) ? usersResp.data : []
+        let pendingWithInfo = pending.map(friend => {
+          const info = allUsers.find(u => String(u.id) == String(friend.usuario_id))
+          if (!info) return null
+          return {
+            ...info,
+            amigo_id: friend.usuario_id,
+            friendship_id: friend.id
+          }
+        })
+        const newList = pendingWithInfo.filter(Boolean)
+        if (!areRequestListsEqual(newList, pendingRequests.value)) {
+          pendingRequests.value = newList
+        }
+      } else {
+        if (pendingRequests.value.length > 0) pendingRequests.value = []
+      }
+    } else {
+      if (pendingRequests.value.length > 0) pendingRequests.value = []
+    }
+  } catch (e) {
+    // No update on error
+  }
+}
 </script>
 
 <template>

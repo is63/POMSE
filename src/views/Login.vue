@@ -242,8 +242,8 @@ function onAfterLeave(el) {
 .login-btn {
   width: 100%;
   padding: 0.8em 0;
-  background: #fff205;
-  color: #222;
+  background: #8E44FF;
+  color: #fff;
   font-weight: bold;
   font-size: 1.1rem;
   border: none;
@@ -282,13 +282,13 @@ function onAfterLeave(el) {
 
 .login-switch {
   margin-top: 1.5vh;
-  color: #fff205;
+  color: #8E44FF;
   font-size: 1rem;
   text-align: center;
 }
 
 .login-switch a {
-  color: #fff205;
+  color: #8E44FF;
   text-decoration: underline;
   cursor: pointer;
   margin-left: 0.3em;
