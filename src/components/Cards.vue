@@ -12,18 +12,18 @@ const router = useRouter()
 
 axios.defaults.baseURL = 'http://localhost:8080/api/'
 
-let data = ref([])
-let error = ref(null)
-let commentsCount = ref({})
-let likesCount = ref({})
-let savedsCount = ref({})
-let page = ref(1)
-let pageSize = 10
-let loadingMore = ref(false)
-let allLoaded = ref(false)
-let loadedIds = ref(new Set())
-let likedPosts = ref(new Set()) // Guarda los postId que el usuario ha dado like
-let savedPosts = ref(new Set()) // Guarda los postId que el usuario ha guardado
+const data = ref([])
+const error = ref(null)
+const commentsCount = ref({})
+const likesCount = ref({})
+const savedsCount = ref({})
+const page = ref(1)
+const pageSize = 10
+const loadingMore = ref(false)
+const allLoaded = ref(false)
+const loadedIds = ref(new Set())
+const likedPosts = ref(new Set()) // Guarda los postId que el usuario ha dado like
+const savedPosts = ref(new Set()) // Guarda los postId que el usuario ha guardado
 const scrollComponent = ref(null)
 
 // ALERTA BOOTSTRAP

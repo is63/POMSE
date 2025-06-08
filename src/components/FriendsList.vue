@@ -3,22 +3,22 @@ import axios from 'axios';
 import { onMounted, ref, onUnmounted, computed } from 'vue';
 
 axios.defaults.baseURL = 'http://localhost:8080/api/';
-let friends = ref([])
-let pendingRequests = ref([])
-let loadingFriends = ref(true)
-let noFriendsMsg = ref('')
+const friends = ref([])
+const pendingRequests = ref([])
+const loadingFriends = ref(true)
+const noFriendsMsg = ref('')
 
-let searchQuery = ref('')
-let searchResults = ref([])
-let searching = ref(false)
-let searchError = ref('')
+const searchQuery = ref('')
+const searchResults = ref([])
+const searching = ref(false)
+const searchError = ref('')
 
 // Estado para controlar el hover de cada amigo
-let hoveredFriendIndex = ref(null)
-let activeTab = ref('amigos')
+const hoveredFriendIndex = ref(null)
+const activeTab = ref('amigos')
 
-let searchFriends = ref('')
-let searchRequests = ref('')
+const searchFriends = ref('')
+const searchRequests = ref('')
 
 const alertMessage = ref('')
 const alertType = ref('danger')
@@ -31,18 +31,6 @@ function showBootstrapAlert(message, type = 'danger') {
   setTimeout(() => {
     showAlert.value = false
   }, 4000)
-}
-
-async function fetchFriendInfo(id) {
-  let token = sessionStorage.getItem('token')
-  try {
-    let response = await axios.get(`users/${id}`,
-      token ? { headers: { 'Authorization': `Bearer ${token}` } } : undefined
-    )
-    return response.data
-  } catch {
-    return null
-  }
 }
 
 function resetFriends() {

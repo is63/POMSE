@@ -3,10 +3,10 @@ import { ref, computed, onMounted } from 'vue'
 import FriendsSidebar from './FriendsSidebar.vue'
 import MessagesSidebarContainer from './ChatSidebarContainer.vue'
 
-const logoSrc = ref('/public/favicon2.png')
+const logoSrc = ref('/favicon2.png')
 const hasToken = ref(!!sessionStorage.getItem('token'))
 const userInfo = ref(null)
-const showFriendsSidebar = ref(false)
+//const showFriendsSidebar = ref(false)
 const showMessagesSidebar = ref(false)
 
 const props = defineProps({
@@ -67,7 +67,7 @@ onMounted(updateTokenStatus)
         <div class="container-fluid container pb-3">
             <!-- Parte Izquierda -->
             <a class="navbar-brand d-flex align-items-center ml-5" href="/">
-                <img :src="logoSrc" width="32" alt="Logo" />
+            <img :src="logoSrc" width="32" height="32" alt="Logo" />
                 <span class="fw-semibold fs-4">POMSE</span>
             </a>
             <!-- TopMenu Links (centrados, visibles solo si hasToken) -->

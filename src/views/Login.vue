@@ -236,7 +236,7 @@ function onAfterLeave(el) {
 }
 
 .login-group input:focus {
-  border: 1.5px solid #fff205;
+  border: 1.5px solid #8E44FF;
 }
 
 .login-btn {

@@ -2,14 +2,7 @@
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import Header from './components/Header.vue';
-import TopMenu from './components/TopMenu.vue';
 
-const theme = ref(localStorage.getItem('theme') || 'dark')
-
-function setTheme(newTheme) {
-  theme.value = newTheme
-  localStorage.setItem('theme', newTheme)
-}
 
 onMounted(async () => {
   if (!sessionStorage.getItem('token')) return;

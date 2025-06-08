@@ -7,29 +7,17 @@ axios.defaults.baseURL = 'http://localhost:8080/api/'
 
 const emit = defineEmits(['open-chat'])
 
-let messages = ref([])
-let searchMessages = ref('')
-let loadingMessages = ref(true)
-let searchResults = ref([])
-let searchError = ref('')
+const messages = ref([])
+const searchMessages = ref('')
+const loadingMessages = ref(true)
+const searchError = ref('')
 
 // Nueva funcionalidad: búsqueda de amigos y creación de chats
-let searchFriendsQuery = ref('')
-let searchingFriends = ref(false)
-let searchFriendsResults = ref([])
-let searchFriendsError = ref('')
+const searchFriendsQuery = ref('')
+const searchingFriends = ref(false)
+const searchFriendsResults = ref([])
+const searchFriendsError = ref('')
 
-// Helper to get user info by ID
-async function getUserInfo(id, token) {
-    try {
-        let response = await axios.get(`users/${id}`,
-            token ? { headers: { 'Authorization': `Bearer ${token}` } } : undefined
-        )
-        return response.data
-    } catch {
-        return null
-    }
-}
 
 // Cargar chats reales desde el backend propio (no Chatify)
 async function loadMessages() {
