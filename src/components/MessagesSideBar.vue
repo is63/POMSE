@@ -3,7 +3,7 @@ import { ref, onMounted, watch, defineProps, defineEmits, onUnmounted } from 'vu
 import axios from 'axios'
 import echo from '../echo.js'; // Ajusta la ruta si es necesario
 
-axios.defaults.baseURL = 'http://localhost:8080/api/';
+axios.defaults.baseURL = 'https://pomse-back.onrender.com/api/';
 const props = defineProps({
     chatId: { type: [String, Number], required: true },
     visible: Boolean,
@@ -53,7 +53,7 @@ async function fetchMessages() {
             texto: msg.content,
             emisor_id: msg.user_id,
             created_at: msg.created_at,
-            imagen: msg.image_path ? ('http://localhost:8080/storage/' + msg.image_path) : null,
+            imagen: msg.image_path ? ('https://pomse-back.onrender.com/storage/' + msg.image_path) : null,
             user: msg.user
         })) : []
     } catch (e) {
@@ -97,7 +97,7 @@ async function sendMessage() {
                 texto: msg.content,
                 emisor_id: msg.user_id,
                 created_at: msg.created_at,
-                imagen: msg.image_path ? ('http://localhost:8080/storage/' + msg.image_path) : null,
+                imagen: msg.image_path ? ('https://pomse-back.onrender.com/storage/' + msg.image_path) : null,
                 user: msg.user
             })
             scrollToBottom()
@@ -144,7 +144,7 @@ watch(() => props.chatId, (newChatId, oldChatId) => {
                         texto: e.message.content,
                         emisor_id: e.message.user_id,
                         created_at: e.message.created_at,
-                        imagen: e.message.image_path ? ('http://localhost:8080/storage/' + e.message.image_path) : null,
+                        imagen: e.message.image_path ? ('https://pomse-back.onrender.com/storage/' + e.message.image_path) : null,
                         user: e.message.user
                     });
                     scrollToBottom();
@@ -169,7 +169,7 @@ onMounted(() => {
                         texto: e.message.content,
                         emisor_id: e.message.user_id,
                         created_at: e.message.created_at,
-                        imagen: e.message.image_path ? ('http://localhost:8080/storage/' + e.message.image_path) : null,
+                        imagen: e.message.image_path ? ('https://pomse-back.onrender.com/storage/' + e.message.image_path) : null,
                         user: e.message.user
                     });
                     scrollToBottom();
@@ -191,7 +191,7 @@ let fetchInterval = setInterval(async () => {
             texto: msg.content,
             emisor_id: msg.user_id,
             created_at: msg.created_at,
-            imagen: msg.image_path ? ('http://localhost:8080/storage/' + msg.image_path) : null,
+            imagen: msg.image_path ? ('https://pomse-back.onrender.com/storage/' + msg.image_path) : null,
             user: msg.user
         })) : [];
         if (msgs.length !== messages.value.length) {
@@ -223,7 +223,7 @@ onUnmounted(() => {
                 <button class="close-btn" @click="emit('close')" aria-label="Cerrar chat">&times;</button>
                 <div class="chat-header">
                     <img v-if="userToShow?.foto"
-                        :src="userToShow.foto.startsWith('http') ? userToShow.foto : ('http://localhost:8080/' + userToShow.foto)"
+                        :src="userToShow.foto.startsWith('http') ? userToShow.foto : ('https://pomse-back.onrender.com/' + userToShow.foto)"
                         class="chat-avatar" alt="avatar" />
                     <span class="chat-username">{{ userToShow?.usuario || 'Usuario' }}</span>
                 </div>

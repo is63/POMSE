@@ -2,7 +2,7 @@
 import axios from 'axios';
 import { onMounted, ref, onUnmounted, computed } from 'vue';
 
-axios.defaults.baseURL = 'http://localhost:8080/api/';
+axios.defaults.baseURL = 'https://pomse-back.onrender.com/api/';
 const friends = ref([])
 const pendingRequests = ref([])
 const loadingFriends = ref(true)
@@ -383,7 +383,7 @@ async function pollPendingRequests() {
               ? (user.foto.startsWith('http')
                 ? user.foto
                 : (user.foto.startsWith('storage/')
-                  ? 'http://localhost:8080/' + user.foto
+                  ? 'https://pomse-back.onrender.com/' + user.foto
                   : '/' + user.foto.replace(/^public\//, '')))
               : '/icons/favicon.svg'" alt="avatar" width="48" height="48" />
           </div>
@@ -429,7 +429,7 @@ async function pollPendingRequests() {
               ? (friend.foto.startsWith('http')
                 ? friend.foto
                 : (friend.foto.startsWith('storage/')
-                  ? 'http://localhost:8080/' + friend.foto
+                  ? 'https://pomse-back.onrender.com/' + friend.foto
                   : '/' + friend.foto.replace(/^public\//, '')))
               : '/icons/favicon.svg'" alt="avatar" width="48" height="48" />
           </div>
@@ -459,7 +459,7 @@ async function pollPendingRequests() {
               ? (user.foto.startsWith('http')
                 ? user.foto
                 : (user.foto.startsWith('storage/')
-                  ? 'http://localhost:8080/' + user.foto
+                  ? 'https://pomse-back.onrender.com/' + user.foto
                   : '/' + user.foto.replace(/^public\//, '')))
               : '/icons/favicon.svg'" alt="avatar" width="48" height="48" />
           </div>

@@ -10,7 +10,7 @@ import saveIcon from '/public/icons/save.svg'
 
 const router = useRouter()
 
-axios.defaults.baseURL = 'http://localhost:8080/api/'
+axios.defaults.baseURL = 'https://pomse-back.onrender.com/api/'
 
 const data = ref([])
 const error = ref(null)
@@ -41,7 +41,7 @@ function showBootstrapAlert(message, type = 'danger') {
 
 function getImageUrl(path) {
     if (!path) return null
-    return 'http://localhost:8080/' + path;
+    return 'https://pomse-back.onrender.com/' + path;
 }
 
 async function fetchCommentsCount(postId) {
