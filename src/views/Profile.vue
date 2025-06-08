@@ -154,7 +154,7 @@ async function fetchUserFriends() {
 const userAvatar = computed(() => {
     if (userInfo.value && userInfo.value.foto) {
         if (userInfo.value.foto.startsWith('http')) return userInfo.value.foto
-        if (userInfo.value.foto.startsWith('storage/')) return 'http://localhost:8080/' + userInfo.value.foto
+        if (userInfo.value.foto.startsWith('storage/')) return 'https://pomse-back.onrender.com/' + userInfo.value.foto
         return '/' + userInfo.value.foto.replace(/^public\//, '')
     }
     return '/icons/favicon.svg'
@@ -279,7 +279,7 @@ onMounted(async () => {
                                         <div class="card-content">
                                             <div class="card-title text-dark">{{ post.titulo }}</div>
                                             <div class="card-desc">{{ post.descripcion }}</div>
-                                            <img v-if="post.imagen" :src="'http://localhost:8080/' + post.imagen"
+                                            <img v-if="post.imagen" :src="'https://pomse-back.onrender.com/' + post.imagen"
                                                 alt="Imagen" class="card-img"
                                                 @error="event.target.style.display = 'none'" />
                                         </div>
@@ -299,7 +299,7 @@ onMounted(async () => {
                                         <div class="card-content">
                                             <div class="card-title text-dark">{{ like.titulo }}</div>
                                             <div class="card-desc">{{ like.descripcion }}</div>
-                                            <img v-if="like.imagen" :src="'http://localhost:8080/' + like.imagen"
+                                            <img v-if="like.imagen" :src="'https://pomse-back.onrender.com/' + like.imagen"
                                                 alt="Imagen" class="card-img"
                                                 @error="event.target.style.display = 'none'" />
                                         </div>
@@ -319,7 +319,7 @@ onMounted(async () => {
                                         <div class="card-content">
                                             <div class="card-title text-dark">{{ saved.titulo }}</div>
                                             <div class="card-desc">{{ saved.descripcion }}</div>
-                                            <img v-if="saved.imagen" :src="'http://localhost:8080/' + saved.imagen"
+                                            <img v-if="saved.imagen" :src="'https://pomse-back.onrender.com/' + saved.imagen"
                                                 alt="Imagen" class="card-img"
                                                 @error="event.target.style.display = 'none'" />
                                         </div>

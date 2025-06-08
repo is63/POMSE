@@ -7,7 +7,7 @@ import Header from './components/Header.vue';
 onMounted(async () => {
   if (!sessionStorage.getItem('token')) return;
   try {
-    const response = await fetch('http://localhost:8080/api/check-token', {
+    const response = await fetch('https://pomse-back.onrender.com/api/check-token', {
       headers: {
         'Authorization': `Bearer ${sessionStorage.getItem('token')}`
       }
