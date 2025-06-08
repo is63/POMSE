@@ -28,5 +28,4 @@ coverage
 *.sw?
 
 *.tsbuildinfo
-src/echo.js
 .env
