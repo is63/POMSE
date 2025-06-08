@@ -11,7 +11,7 @@ const echo = new Echo({
     cluster: import.meta.env.VITE_PUSHER_APP_CLUSTER,
     forceTLS: true,
     encrypted: true,
-    authEndpoint: 'https://pomse-back.onrender.com/broadcasting/auth',
+    authEndpoint: 'http://localhost:8080/broadcasting/auth',
     auth: {
         headers: {
             Authorization: token ? `Bearer ${token}` : ''

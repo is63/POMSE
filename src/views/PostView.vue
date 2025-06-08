@@ -7,7 +7,7 @@ import likeIcon from '/public/icons/like.svg'
 import saveIcon from '/public/icons/save.svg'
 
 
-axios.defaults.baseURL = 'https://pomse-back.onrender.com/api/'
+axios.defaults.baseURL = 'http://localhost:8080/api/'
 
 const route = useRoute()
 const post = ref(null)
@@ -45,7 +45,7 @@ let saved = ref(false)
 
 function getImageUrl(path) {
     if (!path) return null
-    return 'https://pomse-back.onrender.com/' + path;
+    return 'http://localhost:8080/' + path;
 }
 
 async function fetchLikeAndSavedStatus() {
@@ -328,7 +328,7 @@ function showBootstrapAlert(message, type = 'danger') {
                 <div v-if="post.titulo" class="reddit-title">{{ post.titulo }}</div>
                 <div v-if="post.descripcion" class="reddit-desc">{{ post.descripcion }}</div>
                 <div v-if="post.imagen" class="reddit-img-wrapper">
-                    <img :src="post.imagen.startsWith('http') ? post.imagen : 'https://pomse-back.onrender.com/' + post.imagen"
+                    <img :src="post.imagen.startsWith('http') ? post.imagen : 'http://localhost:8080/' + post.imagen"
                         :alt="post.titulo || 'Imagen del post'" class="reddit-img" />
                 </div>
                 <div class="reddit-meta post-meta" v-if="post.created_at">
@@ -371,7 +371,7 @@ function showBootstrapAlert(message, type = 'danger') {
                         </div>
                         <div class="comment-body">{{ comment.texto }}</div>
                         <img v-if="comment.imagen && comment.imagen !== ''"
-                            :src="comment.imagen.startsWith('http') ? comment.imagen : 'https://pomse-back.onrender.com/' + comment.imagen"
+                            :src="comment.imagen.startsWith('http') ? comment.imagen : 'http://localhost:8080/' + comment.imagen"
                             class="comment-img" />
                         <div class="comment-date">{{ formatDateDMY(comment.created_at) }}</div>
                     </div>

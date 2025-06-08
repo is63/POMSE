@@ -3,7 +3,7 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
 
-axios.defaults.baseURL = 'https://pomse-back.onrender.com/api/'
+axios.defaults.baseURL = 'http://localhost:8080/api/'
 
 const router = useRouter()
 const user = ref(JSON.parse(sessionStorage.getItem('user')) || {})
@@ -14,7 +14,7 @@ const form = ref({
     bio: user.value.bio || '',
     foto: null
 })
-const preview = ref(user.value.foto ? (user.value.foto.startsWith('http') ? user.value.foto : 'https://pomse-back.onrender.com' + user.value.foto) : '/icons/favicon.svg')
+const preview = ref(user.value.foto ? (user.value.foto.startsWith('http') ? user.value.foto : 'http://localhost:8080/' + user.value.foto) : '/icons/favicon.svg')
 const errorMsg = ref('')
 const successMsg = ref('')
 
@@ -73,7 +73,7 @@ onMounted(async () => {
             form.value.bio = user.value.bio || ''
             form.value.password = ''
             form.value.foto = null
-            preview.value = user.value.foto ? (user.value.foto.startsWith('http') ? user.value.foto : 'https://pomse-back.onrender.com' + user.value.foto) : '/icons/favicon.svg'
+            preview.value = user.value.foto ? (user.value.foto.startsWith('http') ? user.value.foto : 'http://localhost:8080/' + user.value.foto) : '/icons/favicon.svg'
         }
     } catch { }
 })

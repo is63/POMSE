@@ -4,7 +4,7 @@ import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
 
-axios.defaults.baseURL = 'https://pomse-back.onrender.com/api/'
+axios.defaults.baseURL = 'http://localhost:8080/api/'
 
 
 let username = ref('')
