@@ -2,6 +2,7 @@
 import axios from 'axios';
 import { onMounted, ref, onUnmounted, computed } from 'vue';
 import { getEcho } from '../echo.js';
+import { useRouter } from 'vue-router'
 
 axios.defaults.baseURL = 'http://localhost:8080/api/';
 const friends = ref([])
@@ -292,6 +293,14 @@ const filteredRequests = computed(() => {
   })
 })
 
+const router = useRouter()
+
+// Cambiar la función goToProfile para que navegue a /external-profile
+function goToProfile(user) {
+  if (!user || !user.amigo_id) return
+  router.push({ path: '/external-profile', query: { id: user.amigo_id } })
+}
+
 onMounted(() => {
   loadFriends()
   loadPendingRequests()
@@ -452,8 +461,9 @@ async function pollPendingRequests() {
             placeholder="Buscar en tus amigos..." />
         </div>
         <div v-for="(friend, index) in filteredFriends" :key="index" class="user-card-rect"
-          @mouseenter="hoveredFriendIndex = index" @mouseleave="hoveredFriendIndex = null">
-          <div class="user-card-img">
+          @mouseenter="hoveredFriendIndex = index" @mouseleave="hoveredFriendIndex = null" @click="goToProfile(friend)"
+          style="cursor:pointer;">
+          <div class="user-card-img" @click.stop="goToProfile(friend)">
             <img :src="friend.foto
               ? (friend.foto.startsWith('http')
                 ? friend.foto
@@ -466,7 +476,7 @@ async function pollPendingRequests() {
             {{ friend.usuario || friend.nombre || friend.name || 'Amigo' }}
           </div>
           <button v-if="hoveredFriendIndex === index" class="user-card-remove-btn" title="Eliminar amigo"
-            @click="deleteFriend(friend.amigo_id)">
+            @click.stop="deleteFriend(friend.amigo_id)">
             <i class="bi bi-person-x-fill"></i>
           </button>
           <span v-else class="user-card-friend-icon" title="Amigo">
@@ -672,6 +682,13 @@ async function pollPendingRequests() {
   object-fit: cover;
   background: #161515;
   border: 2px solid #8E44FF44;
+  transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.user-card-img img:hover {
+  transform: translateY(-8px) scale(1.11);
+  box-shadow: 0 10px 30px #8e44ff55, 0 2px 8px #0006;
+  z-index: 2;
 }
 
 .user-card-name {

@@ -3,6 +3,7 @@ import Home from '@/views/Home.vue'
 import Login from '@/views/Login.vue'
 import Profile from '../views/Profile.vue'
 import EditProfile from '@/views/EditProfile.vue'
+import ExternalProfile from '../views/ExternalProfile.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -26,6 +27,11 @@ const router = createRouter({
       path: '/EditProfile',
       name: 'EditProfile',
       component: EditProfile,
+    },
+    {
+      path: '/external-profile',
+      name: 'ExternalProfile',
+      component: ExternalProfile
     },
     {
       path: '/crearPost',
