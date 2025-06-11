@@ -13,6 +13,8 @@ const loading = ref(false)
 const error = ref('')
 const success = ref('')
 const router = useRouter()
+const fileInput = ref(null)
+const isDragOver = ref(false)
 
 function handleFileChange(e) {
     const file = e.target.files[0]
@@ -48,40 +50,54 @@ async function crearPost() {
         loading.value = false
     }
 }
+
+function onDropzoneDragOver() {
+    isDragOver.value = true
+}
+function onDropzoneDragLeave() {
+    isDragOver.value = false
+}
+function onDropzoneDrop(e) {
+    isDragOver.value = false
+    const files = e.dataTransfer.files
+    if (files && files.length > 0) {
+        const file = files[0]
+        imagen.value = file
+        imagenPreview.value = URL.createObjectURL(file)
+    }
+}
 </script>
 
 <template>
-    <div class="crear-post-container">
-        <h2 class="crear-post-title">Crear nuevo post</h2>
-        <form class="crear-post-form" @submit.prevent="crearPost">
-            <label for="titulo">Título *</label>
-            <input id="titulo" v-model="titulo" type="text" maxlength="255" required />
-
-            <label for="descripcion">Descripción</label>
-            <textarea id="descripcion" v-model="descripcion" rows="3" maxlength="800" placeholder="Opcional"></textarea>
-
-            <label class="custom-file-upload">
-                <input type="file" accept="image/*" @change="handleFileChange" />
-                📎 Seleccionar imagen
-            </label>
-            <div v-if="imagenPreview" class="preview-img">
-                <img :src="imagenPreview" alt="preview" />
+    <div class="crear-post-social-container">
+        <h2 class="crear-post-social-title">Crear nuevo post</h2>
+        <form class="crear-post-social-form" @submit.prevent="crearPost">
+            <input id="titulo" v-model="titulo" type="text" maxlength="255" required placeholder="Título del post *"
+                class="social-title-input" />
+            <textarea id="descripcion" v-model="descripcion" rows="3" maxlength="800"
+                placeholder="¿Qué quieres compartir? (opcional)" class="social-desc-input"></textarea>
+            <div class="social-dropzone" @click="$refs.fileInput.click()" @dragover.prevent="onDropzoneDragOver"
+                @dragleave.prevent="onDropzoneDragLeave" @drop.prevent="onDropzoneDrop"
+                :class="{ 'dropzone-dragover': isDragOver }">
+                <span v-if="!imagenPreview" class="dropzone-text">📸 Arrastra una imagen o haz click aquí</span>
+                <img v-if="imagenPreview" :src="imagenPreview" alt="preview" class="dropzone-img-preview" />
+                <input ref="fileInput" type="file" accept="image/*" @change="handleFileChange" style="display:none;" />
             </div>
-
-            <button class="btn-crear" type="submit" :disabled="loading">
-                {{ loading ? 'Creando...' : 'Crear post' }}
+            <button class="social-btn-crear" type="submit" :disabled="loading">
+                <span v-if="loading" class="social-loader"></span>
+                <span v-else>Publicar</span>
             </button>
-            <div v-if="error" class="alert neon-alert alert-danger mt-3">{{ error }}</div>
-            <div v-if="success" class="alert neon-alert alert-success mt-3">{{ success }}</div>
+            <div v-if="error" class="alert social-alert alert-danger mt-3">{{ error }}</div>
+            <div v-if="success" class="alert social-alert alert-success mt-3">{{ success }}</div>
         </form>
     </div>
 </template>
 
 <style scoped>
-.crear-post-container {
+.crear-post-social-container {
     border-radius: 18px;
     padding: 2.5em 2em 2em 2em;
-    max-width: 650px;
+    max-width: 540px;
     margin: 3em auto;
     box-shadow: 0 2px 24px #8e44ff22, 0 1px 8px #0002;
     background: #232323;
@@ -89,7 +105,7 @@ async function crearPost() {
     border-bottom: 4px solid #8E44FF44;
 }
 
-.crear-post-title {
+.crear-post-social-title {
     color: #8E44FF;
     font-size: 2.1em;
     font-weight: 700;
@@ -99,7 +115,7 @@ async function crearPost() {
     letter-spacing: 0.01em;
 }
 
-.crear-post-form {
+.crear-post-social-form {
     display: flex;
     flex-direction: column;
     gap: 1.2em;
@@ -109,96 +125,148 @@ async function crearPost() {
     background: transparent;
 }
 
-.crear-post-form label {
-    color: #8E44FF;
-    font-weight: 600;
-    margin-bottom: 0.2em;
-    letter-spacing: 0.01em;
-}
-
-.crear-post-form input[type="text"],
-.crear-post-form textarea {
-    background: #181818;
-    color: #fff;
-    border: 1.5px solid #8e44ff44;
-    border-radius: 10px;
-    padding: 0.8em 1.1em;
-    font-size: 1.08em;
-    transition: border 0.2s, background 0.2s;
-    box-shadow: 0 1px 6px #8e44ff11;
-}
-
-.crear-post-form input[type="text"]:focus,
-.crear-post-form textarea:focus {
-    border-color: #8E44FF;
-    background: #232323;
-    outline: none;
-    color: #fff;
-}
-
-.custom-file-upload {
-    display: inline-block;
-    padding: 0.5em 1.2em;
+.social-dropzone {
+    background: rgba(255, 255, 255, 0.08);
+    border: 2.5px dashed #8E44FF;
+    border-radius: 16px;
+    min-height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
-    color: #a259ff;
-    border: 1.5px solid #8E44FF;
-    border-radius: 8px;
-    font-weight: 700;
-    background: #181818;
-    transition: background 0.2s, color 0.2s, border 0.2s;
+    transition: border-color 0.2s, background 0.2s;
     margin-bottom: 0.5em;
-    letter-spacing: 0.01em;
-    text-shadow: none;
-    box-shadow: 0 1px 8px #8e44ff22;
-}
-
-.custom-file-upload:hover {
-    color: #fff;
-    background: #8E44FF;
-    border-color: #8E44FF;
-    box-shadow: 0 0 12px #8e44ff99;
-}
-
-.crear-post-form input[type="file"] {
-    display: none;
-}
-
-.preview-img img {
-    max-width: 160px;
-    max-height: 160px;
-    border-radius: 10px;
     margin-top: 0.5em;
+    position: relative;
+    overflow: hidden;
+}
+
+.social-dropzone:hover {
+    border-color: #fff205;
+    background: rgba(142, 68, 255, 0.10);
+}
+
+.social-dropzone.dropzone-dragover {
+    border-color: #C471ED;
+    background: rgba(196, 113, 237, 0.12);
+    transition: border-color 0.18s, background 0.18s;
+}
+
+.dropzone-text {
+    color: #8E44FF;
+    font-size: 1.1em;
+    font-weight: 600;
+    text-align: center;
+    opacity: 0.85;
+}
+
+.dropzone-img-preview {
+    max-width: 100%;
+    max-height: 180px;
+    border-radius: 12px;
+    object-fit: cover;
     box-shadow: 0 1px 8px #8E44FF44;
     background: #181818;
-    object-fit: cover;
     border: 2px solid #8E44FF44;
 }
 
-.btn-crear {
-    background: linear-gradient(90deg, #8E44FF 80%, #6c2bd7 100%);
+.social-title-input {
+    background: #181818;
+    color: #fff;
+    border: none;
+    border-bottom: 2.5px solid #8E44FF44;
+    border-radius: 14px;
+    padding: 0.8em 1.1em;
+    font-size: 1.13em;
+    font-weight: 700;
+    transition: border-color 0.2s, background 0.2s;
+    box-shadow: none;
+}
+
+.social-title-input:focus {
+    border-bottom: 2.5px solid #8E44FF;
+    background: #2d2340;
+    /* Fondo diferente al contenedor padre */
+    outline: none;
+}
+
+.social-desc-input {
+    background: #181818;
+    color: #fff;
+    border: none;
+    border-bottom: 2.5px solid #8E44FF44;
+    border-radius: 14px;
+    /* Más redondeado */
+    padding: 0.8em 1.1em;
+    font-size: 1.08em;
+    min-height: 60px;
+    max-height: 120px;
+    resize: vertical;
+    transition: border-color 0.2s, background 0.2s;
+    box-shadow: none;
+}
+
+.social-desc-input:focus {
+    border-bottom: 2.5px solid #8E44FF;
+    background: #2d2340;
+    /* Fondo diferente al contenedor padre */
+    outline: none;
+}
+
+.social-btn-crear {
+    background: linear-gradient(90deg, #8E44FF 0%, #C471ED 100%);
+    /* Morado a lila, transición suave */
     color: #fff;
     border: none;
     font-weight: 700;
-    border-radius: 10px;
+    border-radius: 24px;
     padding: 0.8em 1.6em;
     box-shadow: 0 2px 8px #8e44ff33;
     font-size: 1.13em;
     margin-top: 1em;
-    transition: background 0.2s, color 0.2s;
+    transition: background 0.2s, color 0.2s, transform 0.18s;
     letter-spacing: 0.01em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5em;
+    background-size: 200% 100%;
+    background-position: left;
 }
 
-.btn-crear:disabled {
+.social-btn-crear:disabled {
     opacity: 0.7;
     cursor: not-allowed;
 }
 
-.btn-crear:hover {
-    background: #fff;
-    color: #8E44FF;
+.social-btn-crear:hover {
+    background-position: right;
+    background: linear-gradient(90deg, #C471ED 0%, #8E44FF 100%);
+    color: #fff;
+    transform: scale(1.04);
 }
 
-.neon-alert {
+.social-loader {
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top: 2px solid #8E44FF;
+    border-radius: 50%;
+    width: 1.2em;
+    height: 1.2em;
+    animation: spin 0.6s linear infinite;
+    display: inline-block;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.social-alert {
     background: radial-gradient(ellipse at center, #8e44ff 0%, #3d1a6f 100%) !important;
     color: #fff !important;
     border: 1.5px solid #8e44ff !important;
