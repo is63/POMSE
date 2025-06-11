@@ -14,10 +14,6 @@ RUN npm install -g serve
 # Copiar solo los artefactos de construcción (la carpeta dist) de la etapa anterior
 COPY --from=builder /app/dist ./dist
 
-# Copiar certificados SSL (deben estar en la carpeta docker del proyecto)
-COPY ./docker/server.crt /app/server.crt
-COPY ./docker/server.key /app/server.key
-
 EXPOSE 5173
-# El CMD para servir la carpeta 'dist' por HTTPS
-CMD ["serve", "-s", "dist", "-l", "5173", "--ssl-cert", "/app/server.crt", "--ssl-key", "/app/server.key"]
+# El CMD para servir la carpeta 'dist'
+CMD ["serve", "-s", "dist", "-l", "5173"]
