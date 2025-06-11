@@ -1,6 +1,6 @@
 <script setup>
-import MessagesSidebar from './ChatSidebar.vue';
-import ChatSidebar from './MessagesSideBar.vue';
+import ChatSidebar from './ChatSidebar.vue';
+import MessagesSidebar from './MessagesSideBar.vue';
 import { ref, defineProps, defineEmits } from 'vue';
 
 const props = defineProps({
@@ -8,15 +8,15 @@ const props = defineProps({
 });
 const emit = defineEmits(['close']);
 
-const showChatSidebar = ref(false)
+const showMessagesSidebar = ref(false)
 const selectedChat = ref(null)
 
 function handleOpenChat(chat) {
     selectedChat.value = chat
-    showChatSidebar.value = true
+    showMessagesSidebar.value = true
 }
-function closeChatSidebar() {
-    showChatSidebar.value = false
+function closeMessagesSidebar() {
+    showMessagesSidebar.value = false
     selectedChat.value = null
 }
 </script>
@@ -26,10 +26,10 @@ function closeChatSidebar() {
         <div v-if="visible" class="messages-sidebar-overlay" @click.self="emit('close')" tabindex="-1">
             <aside class="messages-sidebar">
                 <button class="close-btn" @click="emit('close')" aria-label="Cerrar sidebar">&times;</button>
-                <MessagesSidebar @open-chat="handleOpenChat" />
+                <ChatSidebar @open-chat="handleOpenChat" />
             </aside>
-            <ChatSidebar v-if="showChatSidebar" :chat-id="selectedChat?.id" :user="selectedChat"
-                :visible="showChatSidebar" @close="closeChatSidebar" />
+            <MessagesSidebar v-if="showMessagesSidebar" :chat-id="selectedChat?.id" :user="selectedChat"
+                :visible="showMessagesSidebar" @close="closeMessagesSidebar" />
         </div>
     </transition>
 </template>

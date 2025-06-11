@@ -62,7 +62,7 @@ async function fetchLikesCount(postId) {
         if (token) {
             headers = {
                 Authorization: `Bearer ${token}`,
-                Accept: 'application/json'
+                Accept: 'application/json',
             }
         }
         let response = await axios.get(`likesOfPost/${postId}`, { headers })
