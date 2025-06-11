@@ -1,10 +1,11 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onBeforeUnmount, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
 import { useInfiniteScroll } from '@vueuse/core'
 import likeIcon from '/public/icons/like.svg'
 import saveIcon from '/public/icons/save.svg'
+import { getEcho } from '../echo.js'
 
 
 axios.defaults.baseURL = 'http://localhost:8080/api/'
@@ -42,6 +43,8 @@ let likesCount = ref(0)
 let savedsCount = ref(0)
 let liked = ref(false)
 let saved = ref(false)
+
+let echoChannel = null;
 
 function getImageUrl(path) {
     if (!path) return null
@@ -175,28 +178,51 @@ onMounted(async () => {
 
     await fetchLikeAndSavedStatus()
 
-    // --- Polling para nuevos comentarios cada 3 segundos ---
-    setInterval(async () => {
-        try {
-            const res = await axios.get(`/commentsOfPost/${route.params.id}?page=1&limit=${commentsPageSize}`);
-            const paginator = res.data.comments;
-            const newComments = Array.isArray(paginator.data) ? paginator.data : [];
-            // Si hay más comentarios que los actuales, actualiza la lista
-            if (newComments.length > comments.value.length) {
-                comments.value = newComments;
-                commentsAllLoaded.value = false;
-                // Cargar usuarios de los nuevos comentarios
-                for (const comment of newComments) {
-                    if (comment.usuario_id) {
-                        await fetchUser(comment.usuario_id);
-                    }
-                }
-            }
-        } catch (e) {
-            // Silenciar errores de polling
-        }
-    }, 3000);
+    // Suscribirse a canal público de comentarios del post
+    subscribeToCommentsChannel();
 })
+
+onBeforeUnmount(() => {
+    // Limpiar la suscripción al canal cuando el componente se desmonta
+    if (echoChannel) {
+        echoChannel.stopListening('.App\\Events\\CommentCreated');
+        echoChannel = null;
+    }
+});
+
+watch(() => post.value && post.value.id, (newId, oldId) => {
+    if (newId && newId !== oldId) {
+        subscribeToCommentsChannel();
+    }
+});
+
+function subscribeToCommentsChannel() {
+    if (!post.value || !post.value.id) return;
+    const echo = getEcho();
+    if (!echo) {
+        return;
+    }
+    // Limpiar canal anterior si existe
+    if (echoChannel) {
+        echoChannel.stopListening('.App\\Events\\CommentCreated');
+        echoChannel = null;
+    }
+    const channelName = `comments-post.${post.value.id}`;
+    echoChannel = echo.channel(channelName);
+    echoChannel.listen('.App\\Events\\CommentCreated', async (e) => {
+        if (e && e.comment) {
+            // Si el comentario no está ya en la lista, lo añadimos directamente
+            if (!comments.value.some(c => c.id === e.comment.id)) {
+                // Cargar usuario si es necesario
+                if (e.comment.usuario_id) {
+                    await fetchUser(e.comment.usuario_id);
+                }
+                // Insertar el nuevo comentario al principio de la lista
+                comments.value = [e.comment, ...comments.value];
+            }
+        }
+    });
+}
 
 async function fetchUser(userId) {
     if (!userId || commentUsers.value[userId]) return;
@@ -292,7 +318,7 @@ async function submitComment() {
         const headers = token ? { Authorization: `Bearer ${token}` } : {}
         await axios.post('/comments', formData, { headers })
         closeCommentForm()
-        window.location.reload()
+        // window.location.reload()
     } catch (e) {
         newCommentError.value = 'No se pudo crear el comentario.'
     } finally {

@@ -1,5 +1,5 @@
 # Etapa 1: Construcción de la aplicación
-FROM node:18-alpine AS builder
+FROM node:20-alpine AS builder
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci # 'npm ci' es generalmente preferido para builds CI/CD
@@ -7,7 +7,7 @@ COPY . .
 RUN npm run build
 
 # Etapa 2: Servir la aplicación
-FROM node:18-alpine
+FROM node:20-alpine
 WORKDIR /app
 # Instalar 'serve' globalmente
 RUN npm install -g serve

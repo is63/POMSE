@@ -1,8 +1,9 @@
 <script setup>
 import axios from 'axios';
 import { onMounted, ref, onUnmounted, computed } from 'vue';
+import { getEcho } from '../echo.js';
 
-axios.defaults.baseURL = 'https://pomse-back.onrender.com/api/';
+axios.defaults.baseURL = 'http://localhost:8080/api/';
 const friends = ref([])
 const pendingRequests = ref([])
 const loadingFriends = ref(true)
@@ -25,6 +26,7 @@ const alertType = ref('danger')
 const showAlert = ref(false)
 
 function showBootstrapAlert(message, type = 'danger') {
+
   alertMessage.value = message
   alertType.value = type
   showAlert.value = true
@@ -87,14 +89,18 @@ async function loadFriends() {
         })
         friends.value = friendInfos.filter(Boolean)
         noFriendsMsg.value = ''
+
       } else {
         friends.value = []
+
       }
     } else {
       resetFriends()
+
     }
   } catch (e) {
     resetFriends()
+    console.error('[FriendsList] loadFriends error:', e)
   } finally {
     loadingFriends.value = false
   }
@@ -150,6 +156,7 @@ async function loadPendingRequests() {
     }
   } catch (e) {
     pendingRequests.value = []
+    console.error('[FriendsList] loadPendingRequests error:', e)
   } finally {
     loadingFriends.value = false
   }
@@ -171,6 +178,7 @@ async function acceptFriend(amigo_id) {
     await loadPendingRequests()
     showBootstrapAlert('Amistad aceptada.', 'success')
   } catch (e) {
+    console.error('[FriendsList] acceptFriend error:', e)
     showBootstrapAlert(e.response?.data?.error || 'Error al aceptar la amistad.', 'danger')
   }
 }
@@ -186,8 +194,10 @@ async function deleteFriend(amigo_id) {
       data: { amigo_id }
     })
     await loadFriends()
+    await loadPendingRequests()
     showBootstrapAlert('Amigo eliminado.', 'success')
   } catch (e) {
+    console.error('[FriendsList] deleteFriend error:', e)
     showBootstrapAlert(e.response?.data?.error || 'Error al eliminar la amistad.', 'danger')
   }
 }
@@ -223,6 +233,7 @@ async function searchUsers() {
     }
   } catch (e) {
     searchError.value = 'No se pudo realizar la búsqueda. Intenta de nuevo.'
+    console.error('[FriendsList] searchUsers error:', e)
   } finally {
     searching.value = false
   }
@@ -243,6 +254,7 @@ async function addFriend(amigo_id) {
     searchResults.value = searchResults.value.filter(u => u.id !== amigo_id)
     await loadPendingRequests()
   } catch (e) {
+    console.error('[FriendsList] addFriend error:', e)
     showBootstrapAlert('No se pudo enviar la solicitud. Puede que ya seas amigo o la solicitud esté pendiente.', 'danger')
   }
 }
@@ -260,6 +272,7 @@ async function deleteRequest(amigo_id) {
     await loadPendingRequests()
     showBootstrapAlert('Solicitud rechazada.', 'success')
   } catch (e) {
+    console.error('[FriendsList] deleteRequest error:', e)
     showBootstrapAlert('No se pudo rechazar la solicitud.', 'danger')
   }
 }
@@ -286,15 +299,31 @@ onMounted(() => {
     loadFriends()
     loadPendingRequests()
   })
-  pendingRequestsInterval = setInterval(pollPendingRequests, 3000)
+
+  // SUSCRIPCIÓN WEBSOCKET
+  const token = sessionStorage.getItem('token')
+  let usuario_id = null
+  try {
+    usuario_id = JSON.parse(atob(token.split('.')[1])).sub
+  } catch { }
+  if (usuario_id) {
+    const echo = getEcho()
+    echo.private(`friend-requests.${usuario_id}`)
+      .listen('.App\\Events\\FriendRequestUpdated', (e) => {
+        loadFriends()
+        loadPendingRequests()
+        showBootstrapAlert('¡Actualización de solicitudes de amistad!', 'success')
+      })
+      .listen('.FriendRequestUpdated', (e) => {
+        loadFriends()
+        loadPendingRequests()
+        showBootstrapAlert('¡Actualización de solicitudes de amistad!', 'success')
+      })
+  }
 })
 onUnmounted(() => {
   window.removeEventListener('token-changed', loadFriends)
-  if (pendingRequestsInterval) clearInterval(pendingRequestsInterval)
 })
-
-// Variable para guardar el id del intervalo
-let pendingRequestsInterval = null
 
 function areRequestListsEqual(listA, listB) {
   if (listA.length !== listB.length) return false
@@ -383,7 +412,7 @@ async function pollPendingRequests() {
               ? (user.foto.startsWith('http')
                 ? user.foto
                 : (user.foto.startsWith('storage/')
-                  ? 'https://pomse-back.onrender.com/' + user.foto
+                  ? 'http://localhost:8080/' + user.foto
                   : '/' + user.foto.replace(/^public\//, '')))
               : '/icons/favicon.svg'" alt="avatar" width="48" height="48" />
           </div>
@@ -429,7 +458,7 @@ async function pollPendingRequests() {
               ? (friend.foto.startsWith('http')
                 ? friend.foto
                 : (friend.foto.startsWith('storage/')
-                  ? 'https://pomse-back.onrender.com/' + friend.foto
+                  ? 'http://localhost:8080/' + friend.foto
                   : '/' + friend.foto.replace(/^public\//, '')))
               : '/icons/favicon.svg'" alt="avatar" width="48" height="48" />
           </div>
@@ -459,7 +488,7 @@ async function pollPendingRequests() {
               ? (user.foto.startsWith('http')
                 ? user.foto
                 : (user.foto.startsWith('storage/')
-                  ? 'https://pomse-back.onrender.com/' + user.foto
+                  ? 'http://localhost:8080/' + user.foto
                   : '/' + user.foto.replace(/^public\//, '')))
               : '/icons/favicon.svg'" alt="avatar" width="48" height="48" />
           </div>

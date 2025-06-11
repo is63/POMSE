@@ -93,24 +93,12 @@ async function sendMessage() {
         formData.append('chat_id', props.chatId)
         if (newMessage.value.trim()) formData.append('content', newMessage.value.trim())
         if (selectedImage.value) formData.append('image', selectedImage.value)
-        const res = await axios.post('messages', formData, {
+        await axios.post('messages', formData, {
             headers: {
                 ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
             }
         })
-        // Añadir el mensaje enviado a la lista inmediatamente (optimista)
-        if (res.data && res.data.message) {
-            const msg = res.data.message
-            messages.value.push({
-                id: msg.id,
-                texto: msg.content,
-                emisor_id: msg.user_id,
-                created_at: msg.created_at,
-                imagen: msg.image_path ? ('http://localhost:8080/storage/' + msg.image_path) : null,
-                user: msg.user
-            })
-            scrollToBottom()
-        }
+        // No añadir el mensaje aquí, se añadirá al llegar por websocket
         newMessage.value = ''
         selectedImage.value = null
     } catch (e) {
@@ -130,12 +118,10 @@ function scrollToBottom() {
 function subscribeToChatChannel(chatId) {
     const echo = getEcho();
     if (!echo) {
-        console.log('[Echo] No hay token, no se puede suscribir a chat.' + chatId);
         return;
     }
     echo.private(`chat.${chatId}`)
         .listen('MessageSent', (e) => {
-            console.log('[Echo] Evento recibido en chat.' + chatId, e);
             if (!messages.value.some(m => m.id === e.message.id)) {
                 messages.value.push({
                     id: e.message.id,
@@ -148,14 +134,12 @@ function subscribeToChatChannel(chatId) {
                 scrollToBottom();
             }
         });
-    console.log(`[Echo] Suscrito al canal: chat.${chatId}`);
 }
 
 function unsubscribeFromChatChannel(chatId) {
     const echo = getEcho();
     if (echo && chatId) {
         echo.leave(`private-chat.${chatId}`);
-        console.log(`[Echo] Salido del canal: private-chat.${chatId}`);
     }
 }
 
