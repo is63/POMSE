@@ -8,7 +8,7 @@ import saveIcon from '/public/icons/save.svg'
 import { getEcho } from '../echo.js'
 
 
-axios.defaults.baseURL = 'http://localhost:8080/api/'
+axios.defaults.baseURL = 'https://localhost:8443/api/'
 
 const route = useRoute()
 const post = ref(null)
@@ -48,7 +48,7 @@ let echoChannel = null;
 
 function getImageUrl(path) {
     if (!path) return null
-    return 'http://localhost:8080/' + path;
+    return 'https://localhost:8443/' + path;
 }
 
 async function fetchLikeAndSavedStatus() {
@@ -354,7 +354,7 @@ function showBootstrapAlert(message, type = 'danger') {
                 <div v-if="post.titulo" class="reddit-title">{{ post.titulo }}</div>
                 <div v-if="post.descripcion" class="reddit-desc">{{ post.descripcion }}</div>
                 <div v-if="post.imagen" class="reddit-img-wrapper">
-                    <img :src="post.imagen.startsWith('http') ? post.imagen : 'http://localhost:8080/' + post.imagen"
+                    <img :src="post.imagen.startsWith('http') ? post.imagen : 'https://localhost:8443/' + post.imagen"
                         :alt="post.titulo || 'Imagen del post'" class="reddit-img" />
                 </div>
                 <div class="reddit-meta post-meta" v-if="post.created_at">
@@ -397,7 +397,7 @@ function showBootstrapAlert(message, type = 'danger') {
                         </div>
                         <div class="comment-body">{{ comment.texto }}</div>
                         <img v-if="comment.imagen && comment.imagen !== ''"
-                            :src="comment.imagen.startsWith('http') ? comment.imagen : 'http://localhost:8080/' + comment.imagen"
+                            :src="comment.imagen.startsWith('http') ? comment.imagen : 'https://localhost:8443/' + comment.imagen"
                             class="comment-img" />
                         <div class="comment-date">{{ formatDateDMY(comment.created_at) }}</div>
                     </div>

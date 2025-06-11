@@ -70,7 +70,7 @@ async function fetchUserFriends() {
 const userAvatar = computed(() => {
     if (userInfo.value && userInfo.value.foto) {
         if (userInfo.value.foto.startsWith('http')) return userInfo.value.foto
-        if (userInfo.value.foto.startsWith('storage/')) return 'http://localhost:8080/' + userInfo.value.foto
+        if (userInfo.value.foto.startsWith('storage/')) return 'https://localhost:8443/' + userInfo.value.foto
         return '/' + userInfo.value.foto.replace(/^public\//, '')
     }
     return '/icons/favicon.svg'
@@ -125,7 +125,7 @@ const userAvatar = computed(() => {
                                         <div class="card-content">
                                             <div class="card-title text-dark">{{ post.titulo }}</div>
                                             <div class="card-desc">{{ post.descripcion }}</div>
-                                            <img v-if="post.imagen" :src="'http://localhost:8080/' + post.imagen"
+                                            <img v-if="post.imagen" :src="'https://localhost:8443/' + post.imagen"
                                                 alt="Imagen" class="card-img"
                                                 @error="event.target.style.display = 'none'" />
                                         </div>

@@ -42,7 +42,7 @@ function logout() {
 const userAvatar = computed(() => {
     if (userInfo.value && userInfo.value.foto) {
         if (userInfo.value.foto.startsWith('http')) return userInfo.value.foto
-        if (userInfo.value.foto.startsWith('storage/')) return 'http://localhost:8080/' + userInfo.value.foto
+        if (userInfo.value.foto.startsWith('storage/')) return 'https://localhost:8443/' + userInfo.value.foto
         return '/' + userInfo.value.foto.replace(/^public\//, '')
     }
     return '/icons/favicon.svg'

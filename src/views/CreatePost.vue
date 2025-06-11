@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
 
-axios.defaults.baseURL = 'http://localhost:8080/api/'
+axios.defaults.baseURL = 'https://localhost:8443/api/'
 
 const titulo = ref('')
 const descripcion = ref('')
@@ -65,6 +65,11 @@ function onDropzoneDrop(e) {
         imagen.value = file
         imagenPreview.value = URL.createObjectURL(file)
     }
+}
+
+function getImageUrl(path) {
+    if (!path) return null
+    return 'https://localhost:8443/' + path;
 }
 </script>
 

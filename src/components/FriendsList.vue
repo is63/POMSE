@@ -4,7 +4,7 @@ import { onMounted, ref, onUnmounted, computed } from 'vue';
 import { getEcho } from '../echo.js';
 import { useRouter } from 'vue-router'
 
-axios.defaults.baseURL = 'http://localhost:8080/api/';
+axios.defaults.baseURL = 'https://localhost:8443/api/';
 const friends = ref([])
 const pendingRequests = ref([])
 const loadingFriends = ref(true)
@@ -421,7 +421,7 @@ async function pollPendingRequests() {
               ? (user.foto.startsWith('http')
                 ? user.foto
                 : (user.foto.startsWith('storage/')
-                  ? 'http://localhost:8080/' + user.foto
+                  ? 'https://localhost:8443/' + user.foto
                   : '/' + user.foto.replace(/^public\//, '')))
               : '/icons/favicon.svg'" alt="avatar" width="48" height="48" />
           </div>
@@ -468,7 +468,7 @@ async function pollPendingRequests() {
               ? (friend.foto.startsWith('http')
                 ? friend.foto
                 : (friend.foto.startsWith('storage/')
-                  ? 'http://localhost:8080/' + friend.foto
+                  ? 'https://localhost:8443/' + friend.foto
                   : '/' + friend.foto.replace(/^public\//, '')))
               : '/icons/favicon.svg'" alt="avatar" width="48" height="48" />
           </div>
@@ -498,7 +498,7 @@ async function pollPendingRequests() {
               ? (user.foto.startsWith('http')
                 ? user.foto
                 : (user.foto.startsWith('storage/')
-                  ? 'http://localhost:8080/' + user.foto
+                  ? 'https://localhost:8443/' + user.foto
                   : '/' + user.foto.replace(/^public\//, '')))
               : '/icons/favicon.svg'" alt="avatar" width="48" height="48" />
           </div>

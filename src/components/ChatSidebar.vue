@@ -3,7 +3,7 @@ import { ref, computed, onMounted } from 'vue'
 import axios from 'axios'
 import { defineEmits } from 'vue'
 
-axios.defaults.baseURL = 'http://localhost:8080/api/'
+axios.defaults.baseURL = 'https://localhost:8443/api/'
 
 const emit = defineEmits(['open-chat'])
 
@@ -47,7 +47,7 @@ async function loadMessages() {
                     id: chat.id,
                     usuario: otherUser?.usuario || otherUser?.name || 'Usuario',
                     avatar: otherUser?.foto
-                        ? (otherUser.foto.startsWith('http') ? otherUser.foto : 'http://localhost:8080/' + otherUser.foto)
+                        ? (otherUser.foto.startsWith('http') ? otherUser.foto : 'https://localhost:8443/' + otherUser.foto)
                         : '/icons/favicon.svg',
                     user_id: otherUser?.id,
                 }
@@ -188,7 +188,7 @@ onMounted(loadMessages)
             <div v-else-if="searchFriendsResults.length">
                 <div v-for="user in searchFriendsResults" :key="user.id" class="user-card-rect">
                     <div class="user-card-img">
-                        <img :src="user.foto ? (user.foto.startsWith('http') ? user.foto : 'http://localhost:8080/' + user.foto) : '/icons/favicon.svg'"
+                        <img :src="user.foto ? (user.foto.startsWith('http') ? user.foto : 'https://localhost:8443/' + user.foto) : '/icons/favicon.svg'"
                             alt="avatar" width="36" height="36" />
                     </div>
                     <div class="user-card-content">

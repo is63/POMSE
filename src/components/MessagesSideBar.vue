@@ -3,7 +3,7 @@ import { ref, onMounted, watch, defineProps, defineEmits, onUnmounted } from 'vu
 import axios from 'axios'
 import { getEcho } from '../echo.js';
 
-axios.defaults.baseURL = 'http://localhost:8080/api/';
+axios.defaults.baseURL = 'https://localhost:8443/api/';
 const props = defineProps({
     chatId: { type: [String, Number], required: true },
     visible: Boolean,
@@ -71,7 +71,7 @@ async function fetchMessages() {
             texto: msg.content,
             emisor_id: msg.user_id,
             created_at: msg.created_at,
-            imagen: msg.image_path ? ('http://localhost:8080/storage/' + msg.image_path) : null,
+            imagen: msg.image_path ? ('https://localhost:8443/storage/' + msg.image_path) : null,
             user: msg.user
         })) : []
     } catch (e) {
@@ -128,7 +128,7 @@ function subscribeToChatChannel(chatId) {
                     texto: e.message.content,
                     emisor_id: e.message.user_id,
                     created_at: e.message.created_at,
-                    imagen: e.message.image_path ? ('http://localhost:8080/storage/' + e.message.image_path) : null,
+                    imagen: e.message.image_path ? ('https://localhost:8443/storage/' + e.message.image_path) : null,
                     user: e.message.user
                 });
                 scrollToBottom();
@@ -191,7 +191,7 @@ function handleKeydown(e) {
             <aside class="chat-sidebar">
                 <button class="close-btn" @click="$emit('close')" aria-label="Cerrar chat">&times;</button>
                 <div class="chat-header">
-                    <img :src="userToShow?.foto ? ('http://localhost:8080/' + userToShow.foto) : '/public/icons/user.svg'"
+                    <img :src="userToShow?.foto ? ('https://localhost:8443/' + userToShow.foto) : '/public/icons/user.svg'"
                         class="chat-avatar" alt="avatar" />
                     <span class="chat-username">{{ userToShow?.usuario || 'Usuario' }}</span>
                 </div>

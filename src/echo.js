@@ -13,7 +13,7 @@ function createEcho(token) {
         cluster: import.meta.env.VITE_PUSHER_APP_CLUSTER,
         forceTLS: true,
         encrypted: true,
-        authEndpoint: 'http://localhost:8080/broadcasting/auth',
+        authEndpoint: 'https://localhost:8443/broadcasting/auth',
         auth: {
             headers: {
                 Authorization: token ? `Bearer ${token}` : '',
