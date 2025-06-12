@@ -45,7 +45,7 @@ const userAvatar = computed(() => {
         if (userInfo.value.foto.startsWith('storage/')) return 'https://localhost:8443/' + userInfo.value.foto
         return '/' + userInfo.value.foto.replace(/^public\//, '')
     }
-    return '/icons/favicon.svg'
+    return '/user.svg'
 })
 
 function openFriendsSidebar() { emit('update:showFriendsSidebar', true) }
@@ -66,8 +66,9 @@ onMounted(updateTokenStatus)
     <nav class="navbar navbar-expand-md navbar-dark">
         <div class="container-fluid container pb-3">
             <!-- Parte Izquierda -->
-            <a class="navbar-brand d-flex align-items-center ml-5" href="/">
-            <img :src="logoSrc" width="32" height="32" alt="Logo" />
+            <a class="navbar-brand d-flex align-items-center ml-5" href="/" @mouseenter="logoSrc = '/favicon3.png'"
+                @mouseleave="logoSrc = '/favicon2.png'">
+                <img :src="logoSrc" width="32" height="32" alt="Logo" />
                 <span class="fw-semibold fs-4">POMSE</span>
             </a>
             <!-- TopMenu Links (centrados, visibles solo si hasToken) -->
@@ -93,7 +94,8 @@ onMounted(updateTokenStatus)
                         <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown"
                             role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <span class="avatar-img-header">
-                                <img :src="userAvatar" alt="avatar" width="36" height="36" />
+                                <img :src="userAvatar" alt="avatar de usuario" width="32" height="32"
+                                    onerror="this.onerror=null;this.src='/user.svg'" />
                             </span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">

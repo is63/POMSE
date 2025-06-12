@@ -1,0 +1,16 @@
+services:
+  frontend_https:
+    build: .
+    ports:
+      - "8444:5173" # localhost:8443 expone el 5173 interno (HTTPS)
+    #volumes: #comentar desde aqui
+    #  - .:/app 
+    working_dir: /app
+    #command: npm run dev -- --host #hasta aqui para que no haya dev-tools
+    networks:
+      - pomse_back_laravel # misma red que tu API
+    restart: always
+
+networks:
+  pomse_back_laravel:
+    external: true

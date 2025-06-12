@@ -211,14 +211,12 @@ function subscribeToCommentsChannel() {
     echoChannel = echo.channel(channelName);
     echoChannel.listen('.App\\Events\\CommentCreated', async (e) => {
         if (e && e.comment) {
-            // Si el comentario no está ya en la lista, lo añadimos directamente
+            // Si el comentario no está ya en la lista, lo añadimos al final
             if (!comments.value.some(c => c.id === e.comment.id)) {
-                // Cargar usuario si es necesario
                 if (e.comment.usuario_id) {
                     await fetchUser(e.comment.usuario_id);
                 }
-                // Insertar el nuevo comentario al principio de la lista
-                comments.value = [e.comment, ...comments.value];
+                comments.value = [...comments.value, e.comment];
             }
         }
     });

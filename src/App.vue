@@ -63,6 +63,7 @@ defineExpose({ showMessagesSidebar })
   overflow-y: auto;
   padding-top: 8vh;
   /* deja espacio para el header fijo */
+  cursor: url('/puntero/puntero1.png'), auto;
 }
 
 
@@ -87,5 +88,72 @@ defineExpose({ showMessagesSidebar })
 .layout {
   background-color: transparent;
   color: white;
+}
+</style>
+<style>
+/*
+  Ampliación de la personalización del cursor pointer para todos los elementos y clases interactivos de la app.
+  Incluye selectores de botones, links, tabs, acciones, íconos, etc.
+*/
+.body a,
+.body button,
+.body [role="button"],
+.body .amigos-btn,
+.body .menu-link,
+.body .icon-action,
+.body .close-btn,
+.body .edit-btn,
+.body .send-btn,
+.body .friends-search-btn,
+.body .messages-search-btn,
+.body .social-btn-crear,
+.body .user-card-add-btn,
+.body .user-card-remove-btn,
+.body .start-chat-btn,
+.body .nav-link,
+.body .dropdown-item,
+.body .card-link,
+.body .post-item,
+.body .fab-icon,
+.body .crear-post-fab,
+.body .tab-link,
+.body .tab-pane,
+.body .router-link,
+.body .router-link-exact-active,
+.body .sidebar-btn,
+.body .sidebar-link,
+.body .profile-btn,
+.body .action-btn,
+.body .external-link,
+.body .user-link,
+.body .user-btn,
+.body .chat-btn,
+.body .chat-link,
+.body .message-btn,
+.body .message-link,
+.body .friend-btn,
+.body .friend-link,
+.body .list-btn,
+.body .list-link,
+.body .header-btn,
+.body .header-link,
+.body .file-btn,
+.body .card-action,
+.body .create-comment-btn,
+.body .cancel-btn,
+.body .custom-file-upload,
+.body .edit-profile-btn,
+.body .login-switch a,
+.body .social-dropzone {
+  cursor: url('/puntero/puntero2.png') 0 0, pointer !important;
+}
+
+/* Para deshabilitados: not-allowed */
+.body button:disabled,
+.body .send-btn:disabled,
+.body .social-btn-crear:disabled,
+.body .friends-search-btn:disabled,
+.body .messages-search-btn:disabled {
+  cursor: not-allowed !important;
 }
 </style>
