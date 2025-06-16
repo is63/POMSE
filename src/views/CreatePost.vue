@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
 
@@ -71,6 +71,13 @@ function getImageUrl(path) {
     if (!path) return null
     return 'https://localhost:8443/' + path;
 }
+
+onMounted(() => {
+    const token = sessionStorage.getItem('token')
+    if (!token) {
+        router.push('/')
+    }
+})
 </script>
 
 <template>
